@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import { useMagic } from '@/context/MagicContext';
+import { useZeroDev } from '@/context/ZeroDevContext'; // Added this import line ✨
 
 export default function Home() {
   const { userEmail, loginWithEmail, logout, isInitializing, isLoading } = useMagic();
   const [emailInput, setEmailInput] = useState('');
+  const { smartAccountAddress, isAccountLoading } = useZeroDev();
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,35 +77,45 @@ export default function Home() {
         </p>
 
         {/* Call to Action Box */}
-        {
-          userEmail ? (
-            <div className="max-w-md mx-auto p-6 bg-white/80 backdrop-blur-md rounded-2xl border border-emerald-100 shadow-xl text-center">
-              <h3 className="text-lg font-bold text-slate-900 mb-2">🎉 You're logged in!</h3>
-              <p className="text-slate-600 text-sm mb-4">Ready to try your first gasless transaction on Arbitrum?</p>
+
+        {userEmail ? (
+          <div className="max-w-md mx-auto p-6 bg-white/80 backdrop-blur-md rounded-2xl border border-emerald-100 shadow-xl text-center">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">🎉 You're logged in!</h3>
+            <p className="text-slate-600 text-sm mb-4">Ready to try your first gasless transaction on Arbitrum?</p>
+
+            {isAccountLoading ? (
               <div className="h-10 w-full bg-slate-100 animate-pulse rounded-xl flex items-center justify-center text-xs text-slate-400 font-medium">
                 ZeroDev Smart Account Initializing...
               </div>
-            </div>
-          ) : (
-            <form onSubmit={handleLoginSubmit} className="max-w-md mx-auto p-4 bg-white/70 backdrop-blur-md rounded-2xl border border-amber-100/50 shadow-xl shadow-amber-900/5 flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                value={emailInput}
-                onChange={(e) => setEmailInput(e.target.value)}
-                placeholder="Enter your email to get started"
-                disabled={isLoading}
-                className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 transition-all disabled:opacity-50"
-                required
-              />
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] whitespace-nowrap disabled:opacity-50"
-              >
-                {isLoading ? 'Sending Link...' : "Let's Go! 🚀"}
-              </button>
-            </form>
-          )
+            ) : smartAccountAddress ? (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-mono break-all selection:bg-emerald-200">
+                <span className="font-sans block text-slate-500 font-medium mb-1 text-[10px] tracking-wider uppercase">Your Gasless Account Address</span>
+                {smartAccountAddress}
+              </div>
+            ) : (
+              <div className="text-xs text-rose-600">Failed to establish account proxy connection.</div>
+            )}
+          </div>
+        ) : (
+          <form onSubmit={handleLoginSubmit} className="max-w-md mx-auto p-4 bg-white/70 backdrop-blur-md rounded-2xl border border-amber-100/50 shadow-xl shadow-amber-900/5 flex flex-col sm:flex-row gap-3">
+            <input
+              type="email"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              placeholder="Enter your email to get started"
+              disabled={isLoading}
+              className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 transition-all disabled:opacity-50"
+              required
+            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] whitespace-nowrap disabled:opacity-50"
+            >
+              {isLoading ? 'Sending Link...' : "Let's Go! 🚀"}
+            </button>
+          </form>
+        )
         }
       </header >
 

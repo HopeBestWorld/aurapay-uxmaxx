@@ -1,4 +1,5 @@
 import { MagicProvider } from '@/context/MagicContext';
+import { ZeroDevProvider } from '@/context/ZeroDevContext';
 import './globals.css';
 
 export default function RootLayout({
@@ -8,9 +9,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      {/* Add suppressHydrationWarning here ✨ */}
+      <body suppressHydrationWarning>
         <MagicProvider>
-          {children}
+          <ZeroDevProvider>
+            {children}
+          </ZeroDevProvider>
         </MagicProvider>
       </body>
     </html>
