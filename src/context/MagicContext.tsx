@@ -25,7 +25,10 @@ export function MagicProvider({ children }: { children: React.ReactNode }) {
 
         if (typeof window !== 'undefined') {
             const magicInstance = new Magic(magicKey, {
-                network: 'sepolia',
+                network: {
+                    rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
+                    chainId: 421614,
+                },
             });
             setMagic(magicInstance);
 
